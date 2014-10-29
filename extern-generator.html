@@ -1,0 +1,72 @@
+<!--
+    @license
+    Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+    The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+    The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+    Code distributed by Google as part of the polymer project is also
+    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../context-free-parser/context-free-parser.html">
+
+<!--
+Scrapes source documentation data from input text or url and prints closure externs.
+
+@class extern-generator
+-->
+<polymer-element name="extern-generator" attributes="url">
+<template>
+<context-free-parser url="{{url}}" data="{{data}}"></context-free-parser>
+<template repeat="{{class in data.classes}}">
+  <div>
+  <h2>Externs for: {{class.name}}</h2>
+
+  <pre>
+/**
+ * @fileoverview Generated closure compiler externs for {{class.name}}.
+ *
+ * @license
+ * Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt. The complete set of authors may be
+ * found at http://polymer.github.io/AUTHORS.txt. The complete set of
+ * contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt. Code
+ * distributed by Google as part of the polymer project is also subject to an
+ * additional IP rights grant found at http://polymer.github.io/PATENTS.txt.
+ */
+
+/** @constructor @extends [['{']]{{class.extends | toCamelCaseElement}}[['}']]<template bind="{{class.name | toCamelCaseElement as elementName}}"> **/
+var {{elementName}} = new function() {};
+<template repeat="{{attribute in class.attributes}}">
+/**
+{{attribute.description | commentify}}
+ * @type [['{']]{{attribute.type}}[['}']]
+ */
+{{elementName}}.prototype.{{attribute.name}}
+</template>
+
+</template>
+</pre>
+</div>
+</template>
+</template>
+<script>
+  Polymer({
+    toCamelCaseElement: function(value) {
+      if (value == undefined) {
+        return "PolymerElement"
+      }
+      return value.split('-').map(function(value){
+        return value.toLowerCase().charAt(0).toUpperCase() + value.slice(1)
+      }).join("")+"Element";
+    },
+    commentify: function(value) {
+      splitlines = value.split("\n");
+      return splitlines.map(function(line){
+        return " * " + line
+      }).join("\n");
+    }
+  });
+
+</script>
+</polymer-element>

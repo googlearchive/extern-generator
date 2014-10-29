@@ -1,0 +1,7 @@
+{
+  "name": "extern-generator",
+  "private": true,
+  "dependencies": {
+    "context-free-parser": "Polymer/context-free-parser#master"
+  }
+}

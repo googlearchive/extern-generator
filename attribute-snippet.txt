@@ -1,0 +1,7 @@
+
+
+/**
+%s
+ * @type {%s}
+ */
+%s.prototype.%s
